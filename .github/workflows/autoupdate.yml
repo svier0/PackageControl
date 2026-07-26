@@ -22,8 +22,8 @@ jobs:
           curl -sL -o channel_v3.json "https://packagecontrol.io/channel_v3.json"
 
       - name: Build packages_cache from custom repos
-        shell: python3
         run: |
+          python3 << 'PYEOF'
           import json, urllib.request
 
           with open('channel.json') as f:
@@ -73,6 +73,7 @@ jobs:
           with open('channel_v3.json', 'w') as f:
               json.dump(v3, f, ensure_ascii=False, separators=(',', ':'))
           print('Done: merged into channel_v3.json')
+          PYEOF
 
       - name: Create release v1 if not exists
         env:
