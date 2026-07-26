@@ -8,7 +8,7 @@
       {
         "name": "XRun",
         "author": "svier0",
-        "description": "-",
+        "description": "sublime text 3+4 plugin 遍历文件夹包管理器生成执行菜单",
         "homepage": "https://github.com/svier0/sublime-XRun",
         "releases": [
           {
