@@ -23,7 +23,7 @@ jobs:
           
       - name: Merge custom channel into v3
         run: |
-          jq --slurpfile custom channel.json '.repositories += $custom[0].repositories | .packages_cache += $custom[0].packages_cache' channel_v3.json > tmp.json && mv tmp.json channel_v3.json
+          jq -c --slurpfile custom channel.json '.repositories += $custom[0].repositories | .packages_cache += $custom[0].packages_cache' channel_v3.json > tmp.json && mv tmp.json channel_v3.json
 
       - name: Create release v1 if not exists
         env:
