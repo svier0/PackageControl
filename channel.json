@@ -9,6 +9,7 @@
         "name": "XRun",
         "author": "svier0",
         "description": "-",
+        "homepage": "https://github.com/svier0/sublime-XRun",
         "releases": [
           {
             "version": "0.1.0",
