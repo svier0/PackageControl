@@ -20,10 +20,10 @@ jobs:
         run: |
           curl -sL -o channel_v4.json "https://packagecontrol.github.io/channel/channel_v4.json"
           curl -sL -o channel_v3.json "https://packagecontrol.io/channel_v3.json"
-
+          
       - name: Merge custom channel into v3
         run: |
-          jq --argfile custom channel.json '.repositories += $custom.repositories | .packages_cache += $custom.packages_cache' channel_v3.json > tmp.json && mv tmp.json channel_v3.json
+          jq --slurpfile custom channel.json '.repositories += $custom[0].repositories | .packages_cache += $custom[0].packages_cache' channel_v3.json > tmp.json && mv tmp.json channel_v3.json
 
       - name: Create release v1 if not exists
         env:
