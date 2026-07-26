@@ -21,59 +21,9 @@ jobs:
           curl -sL -o channel_v4.json "https://packagecontrol.github.io/channel/channel_v4.json"
           curl -sL -o channel_v3.json "https://packagecontrol.io/channel_v3.json"
 
-      - name: Build packages_cache from custom repos
+      - name: Merge custom channel into v3
         run: |
-          python3 << 'PYEOF'
-          import json, urllib.request
-
-          with open('channel.json') as f:
-              custom = json.load(f)
-
-          cache = {}
-          for repo_url in custom.get('repositories', []):
-              parts = repo_url.rstrip('/').split('/')
-              if len(parts) < 5:
-                  continue
-              owner, repo = parts[-2], parts[-1]
-              full_name = f'{owner}/{repo}'
-
-              try:
-                  req = urllib.request.Request(
-                      f'https://api.github.com/repos/{full_name}/releases/latest',
-                      headers={'Accept': 'application/vnd.github.v3+json'}
-                  )
-                  with urllib.request.urlopen(req) as resp:
-                      data = json.load(resp)
-
-                  tag = data['tag_name']
-                  version = tag.lstrip('v')
-                  date = data['published_at'].replace('T', ' ').replace('Z', '')
-                  zip_url = f'https://github.com/{full_name}/archive/refs/tags/{tag}.zip'
-
-                  cache[repo_url] = [{
-                      'name': repo,
-                      'releases': [{
-                          'date': date,
-                          'version': version,
-                          'url': zip_url,
-                          'sublime_text': '*',
-                          'platforms': ['*']
-                      }]
-                  }]
-                  print(f'  OK {full_name} -> v{version}')
-              except Exception as e:
-                  print(f'  FAIL {full_name}: {e}')
-
-          with open('channel_v3.json') as f:
-              v3 = json.load(f)
-
-          v3['repositories'] += custom.get('repositories', [])
-          v3['packages_cache'].update(cache)
-
-          with open('channel_v3.json', 'w') as f:
-              json.dump(v3, f, ensure_ascii=False, separators=(',', ':'))
-          print('Done: merged into channel_v3.json')
-          PYEOF
+          jq --argfile custom channel.json '.repositories += $custom.repositories | .packages_cache += $custom.packages_cache' channel_v3.json > tmp.json && mv tmp.json channel_v3.json
 
       - name: Create release v1 if not exists
         env:
