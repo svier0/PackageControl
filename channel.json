@@ -11,8 +11,8 @@
         "description": "-",
         "releases": [
           {
-            "version": "v0.1.0",
-            "date": "2018-07-26",
+            "version": "0.1.0",
+            "date": "2018-07-26 00:00:00",
             "url": "https://github.com/svier0/sublime-XRun/archive/refs/tags/v0.1.0.zip",
             "sublime_text": "*",
             "platforms": ["*"]
