@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  schedule:
+    # 每周六 19:00（北京时间 = 11:00 UTC）
+    - cron: '0 11 * * 6'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download channel files
+        run: |
+          curl -sL -o channel_v4.json "https://packagecontrol.github.io/channel/channel_v4.json"
+          curl -sL -o channel_v3.json "https://packagecontrol.io/channel_v3.json"
+
+      - name: Create release v1 if not exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1 --title "v1" --notes "Package Control Channel Files" || true
+
+      - name: Upload / overwrite assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload v1 channel_v4.json channel_v3.json --clobber
